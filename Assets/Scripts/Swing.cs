@@ -1,21 +1,50 @@
 using UnityEngine;
 
-public class Swing : MonoBehaviour
+public class Pickaxe : MonoBehaviour
 {
-    Animator swing;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        swing = GetComponent<Animator>();
-    }
+    [Header("Mining")]
+    public int damage = 1;
+    public float range = 4f;
+    public float mineInterval = 0.3f;
 
-    // Update is called once per frame
+    [Header("References")]
+    public Camera cam;
+    public Animator animator;
+
+    float mineTimer;
+
     void Update()
     {
         if (Input.GetMouseButton(0))
         {
-            swing.SetTrigger("Swing");
-            Debug.Log("Swinging");
+            mineTimer -= Time.deltaTime;
+
+            if (mineTimer <= 0f)
+            {
+                SwingAndMine();
+                mineTimer = mineInterval;
+            }
+        }
+        else
+        {
+            mineTimer = 0f;
+        }
+    }
+
+    void SwingAndMine()
+    {
+        // Play animation
+        animator.SetTrigger("Swing");
+
+        // Raycast
+        Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out RaycastHit hit, range))
+        {
+            Block block = hit.collider.GetComponent<Block>();
+            if (block != null)
+            {
+                block.Mine(damage);
+            }
         }
     }
 }
