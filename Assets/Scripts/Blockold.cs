@@ -7,7 +7,7 @@ public class Block : MonoBehaviour
 
     Renderer rend;
     Color baseColor;
-    AudioSource audioSource;
+    
 
     void Awake()
     {
@@ -16,7 +16,7 @@ public class Block : MonoBehaviour
         rend = GetComponent<Renderer>();
         rend.material = new Material(rend.material); // avoid shared material bug
         baseColor = rend.material.color;
-        audioSource = GetComponent<AudioSource>();
+        
     }
 
     public void Mine(int damage)
@@ -26,7 +26,6 @@ public class Block : MonoBehaviour
 
         if (health <= 0)
         {
-            PlayDestroySound();
             Destroy(gameObject);
         }
     }
@@ -38,14 +37,6 @@ public class Block : MonoBehaviour
         Color c = baseColor;
         c.a = Mathf.Lerp(0.25f, 1f, t); // tweak if needed
         rend.material.color = c;
-    }
-
-    void PlayDestroySound()
-    {
-        if (audioSource != null && audioSource.clip != null)
-        {
-            AudioSource.PlayClipAtPoint(audioSource.clip, transform.position);
-        }
     }
 
 }

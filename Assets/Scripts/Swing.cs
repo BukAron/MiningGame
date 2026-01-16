@@ -11,14 +11,14 @@ public class Pickaxe : MonoBehaviour
     public Camera cam;
     public Animator animator;
 
-    float mineTimer;
+    private float mineTimer;
 
     void Update()
     {
         if (Input.GetMouseButton(0))
         {
             mineTimer -= Time.deltaTime;
-
+            
             if (mineTimer <= 0f)
             {
                 SwingAndMine();
@@ -38,9 +38,11 @@ public class Pickaxe : MonoBehaviour
 
         // Raycast
         Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+        
         if (Physics.Raycast(ray, out RaycastHit hit, range))
         {
             Block block = hit.collider.GetComponent<Block>();
+            
             if (block != null)
             {
                 block.Mine(damage);
