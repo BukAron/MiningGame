@@ -17,17 +17,21 @@ public class PlayerCam : MonoBehaviour
     }
 
     private void Update()
-    {
-        float mouseX = Input.GetAxis("Mouse X") * sensX * Time.deltaTime;
-        float mouseY = Input.GetAxis("Mouse Y") * sensY * Time.deltaTime;
+{
+    // We use Time.deltaTime to ensure that 10 degrees of movement 
+    // takes the same amount of real-world time regardless of FPS.
+    float mouseX = Input.GetAxisRaw("Mouse X") * sensX * 0.01f;
+    float mouseY = Input.GetAxisRaw("Mouse Y") * sensY * 0.01f;
 
-        yRotation += mouseX;
+    yRotation += mouseX;
+    xRotation -= mouseY;
 
-        xRotation -= mouseY;
-        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
+    // Keep the player from looking behind their own back
+    xRotation = Mathf.Clamp(xRotation, -90f, 90f);
 
-        transform.rotation = Quaternion.Euler(xRotation, yRotation, 0);
-        orientation.rotation = Quaternion.Euler(0, yRotation, 0);
-    }
+    // Apply rotations
+    transform.rotation = Quaternion.Euler(xRotation, yRotation, 0);
+    orientation.rotation = Quaternion.Euler(0, yRotation, 0);
+} 
 
 }

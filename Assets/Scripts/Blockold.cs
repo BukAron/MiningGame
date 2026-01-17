@@ -3,6 +3,7 @@ using UnityEngine;
 public class Block : MonoBehaviour
 {
     public int maxHealth = 3;
+    public int scoreValue = 1;
     int health;
 
     Renderer rend;
@@ -23,12 +24,19 @@ public class Block : MonoBehaviour
     {
         health -= damage;
         UpdateOpacity();
-
         if (health <= 0)
         {
+            Terrain terrain = Object.FindAnyObjectByType<Terrain>();
+            if (terrain != null)
+            {
+                // We pass the scoreValue (1 or 100) to the terrain
+                terrain.AddToInventory(scoreValue);
+            }
+
             Destroy(gameObject);
         }
     }
+
 
     void UpdateOpacity()
     {
@@ -36,7 +44,7 @@ public class Block : MonoBehaviour
 
         Color c = baseColor;
         c.a = Mathf.Lerp(0.25f, 1f, t); // tweak if needed
-        rend.material.color = c;
+        rend.material.SetColor("_BaseColor", c);
     }
 
 }

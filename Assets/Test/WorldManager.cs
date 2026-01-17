@@ -26,8 +26,9 @@ namespace PixelReyn.VoxelSeries.Part2
                     int randomYHeight = Random.Range(1, 16);
                     for (int y = 0; y < randomYHeight; y++)
                     {
-                        container[new Vector3(x, y, z)] = new Voxel() { ID = 1 };
-                    }
+                    // Use the helper we made to set ID 1 and Health 3
+                    container[new Vector3(x, y, z)] = Voxel.Create(1, 3);
+                    }               
                 }
             }
 
