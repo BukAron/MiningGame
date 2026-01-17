@@ -15,9 +15,15 @@ public class Pickaxe : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButton(0))
+
+
+        if (mineTimer > 0)
         {
             mineTimer -= Time.deltaTime;
+        }
+
+        if (Input.GetMouseButton(0))
+        {
             
             if (mineTimer <= 0f)
             {
@@ -25,10 +31,7 @@ public class Pickaxe : MonoBehaviour
                 mineTimer = mineInterval;
             }
         }
-        else
-        {
-            mineTimer = 0f;
-        }
+        
     }
 
     void SwingAndMine()

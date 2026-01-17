@@ -60,21 +60,10 @@ public class Terrain : MonoBehaviour
         GenerateTerrain();
     }
 
-    private void Update()
-    {
-        // Right Click resets everything
-        if (Input.GetMouseButtonDown(1))
-        {
-            ResetChunk();
-        }
-    }
 
-    void ResetChunk()
+    public void ResetChunk()
     {
         foreach (Transform child in transform) { Destroy(child.gameObject); }
-        inventoryCount = 0;
-        totalHiddenValue = 0;
-        if (counterText != null) counterText.text = "Blocks: 0";
         GenerateTerrain();
     }
 
