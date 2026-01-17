@@ -1,4 +1,5 @@
 ﻿<Solution>
+  <Project Path="Nobi.UiRoundedCorners.csproj" />
   <Project Path="Assembly-CSharp.csproj" />
   <Project Path="UnityWakatime.csproj" />
 </Solution>
