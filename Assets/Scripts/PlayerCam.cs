@@ -1,7 +1,11 @@
 using UnityEngine;
 
 public class PlayerCam : MonoBehaviour
+
+
 {
+
+    public PickaxeShop shopScript;
     public float sensX;
     public float sensY;
 
@@ -18,18 +22,19 @@ public class PlayerCam : MonoBehaviour
 
     private void Update()
 {
-    // We use Time.deltaTime to ensure that 10 degrees of movement 
-    // takes the same amount of real-world time regardless of FPS.
+    if (PickaxeShop.IsAnyShopOpen)
+        {
+            return;
+        }
+
     float mouseX = Input.GetAxisRaw("Mouse X") * sensX * 0.01f;
     float mouseY = Input.GetAxisRaw("Mouse Y") * sensY * 0.01f;
 
     yRotation += mouseX;
     xRotation -= mouseY;
 
-    // Keep the player from looking behind their own back
     xRotation = Mathf.Clamp(xRotation, -90f, 90f);
 
-    // Apply rotations
     transform.rotation = Quaternion.Euler(xRotation, yRotation, 0);
     orientation.rotation = Quaternion.Euler(0, yRotation, 0);
 } 
