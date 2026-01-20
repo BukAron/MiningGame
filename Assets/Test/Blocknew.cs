@@ -1,6 +1,5 @@
 using UnityEngine;
-using PixelReyn.VoxelSeries.Part2; // Add this namespace to see Container
-
+using PixelReyn.VoxelSeries.Part2;
 public class Pick : MonoBehaviour
 {
     [Header("Mining")]
@@ -40,16 +39,13 @@ public class Pick : MonoBehaviour
         
         if (Physics.Raycast(ray, out RaycastHit hit, range))
         {
-            // 1. Check if we hit the Voxel Container
             Container container = hit.collider.GetComponent<Container>();
-            
             if (container != null)
             {
-                // Send the exact hit point and normal so the container calculates which block
+
                 container.DamageVoxel(hit.point, hit.normal, damage);
             }
             
-            // Optional: Keep support for old blocks if you still use them
             else 
             {
                 Block block = hit.collider.GetComponent<Block>();

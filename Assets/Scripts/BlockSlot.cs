@@ -25,13 +25,7 @@ public class BlockSlot : MonoBehaviour
     {
         if (playerStats == null || myData == null) return;
 
-        if (playerStats.money >= myData.upgradeCost)
-        {
-            buyButtonImage.color = Color.green;
-        }
-        else
-        {
-            buyButtonImage.color = Color.red;
-        }
+        
+        
     }
 }

@@ -5,8 +5,6 @@ public class PlayerStats : MonoBehaviour
 {
     public int money = 0;
     public TextMeshProUGUI moneyText;
-    
-    // Reference to your actual Pickaxe script on the player model
     public Pickaxe currentPickaxeScript; 
 
     public void AddMoney(int amount)
@@ -22,7 +20,6 @@ public class PlayerStats : MonoBehaviour
             money -= newLevel.cost;
             UpdateMoneyUI();
 
-            // Apply the new values to the actual pickaxe tool
             currentPickaxeScript.damage = newLevel.damage;
             currentPickaxeScript.range = newLevel.range;
             currentPickaxeScript.mineInterval = newLevel.mineInterval;
@@ -31,7 +28,7 @@ public class PlayerStats : MonoBehaviour
             return true;
         }
         
-        Debug.Log("Not enough money!");
+        Debug.Log("Not enough money");
         return false;
     }
 

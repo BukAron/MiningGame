@@ -41,13 +41,16 @@ public class PickaxeShop : MonoBehaviour
 
         if (isShopOpen)
         {
-            if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.E))
+
+            interactPrompt.SetActive(false);
+            if (Input.GetKeyDown(KeyCode.Escape))
             {
                 ToggleShop(false);
             }
             return;
         }
 
+        if (PickaxeShop.IsAnyShopOpen) return;
 
         bool lookingAtShop = IsPlayerLookingAtShop();
         interactPrompt.SetActive(lookingAtShop);
@@ -62,6 +65,8 @@ public class PickaxeShop : MonoBehaviour
     {
         isShopOpen = state;
         shopPanel.SetActive(state);
+
+        IsAnyShopOpen = state;
 
         Cursor.lockState = state ? CursorLockMode.None : CursorLockMode.Locked;
         Cursor.visible = state;

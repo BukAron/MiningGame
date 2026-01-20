@@ -36,10 +36,8 @@ public class Pickaxe : MonoBehaviour
 
     void SwingAndMine()
     {
-        // Play animation
         animator.SetTrigger("Swing");
 
-        // Raycast
         Ray ray = cam.ScreenPointToRay(Input.mousePosition);
         
         if (Physics.Raycast(ray, out RaycastHit hit, range))

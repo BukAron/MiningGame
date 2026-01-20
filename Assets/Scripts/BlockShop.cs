@@ -47,7 +47,9 @@ public class BlockShop : MonoBehaviour
     {
         if (isShopOpen)
         {
-            if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.E))
+            interactPrompt.SetActive(false);
+
+            if (Input.GetKeyDown(KeyCode.Escape))
             {
                 ToggleShop(false);
             }
@@ -89,7 +91,7 @@ public class BlockShop : MonoBehaviour
 
             if (tierIndex <= terrainScript.currentTerrainLevel)
             {
-                Debug.Log("Already unlocked!");
+                Debug.Log("Already unlocked");
                 return;
             }
 

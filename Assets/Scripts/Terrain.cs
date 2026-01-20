@@ -30,6 +30,11 @@ public class Terrain : MonoBehaviour
     private int totalHiddenValue = 0;
     public TextMeshProUGUI counterText;
 
+    [Header("Depth Settings")]
+    public float baseSpecialChance = 5f;
+    public float chanceIncreasePerLayer = 2f;
+    public float maxSpecialChance = 50f;
+
     public void UpgradeTerrainLevel()
     {
         if (currentTerrainLevel < tiers.Length - 1)
@@ -83,7 +88,10 @@ public class Terrain : MonoBehaviour
                     int randomTierIndex = Random.Range(0, currentTerrainLevel + 1);
                     BlockTier selectedTier = tiers[randomTierIndex];
 
-                    bool isSpecial = Random.Range(0f, 100f) <= specialSpawnChance;
+                    float currentDepthChance = baseSpecialChance + (Mathf.Abs(y) * chanceIncreasePerLayer);
+                    currentDepthChance = Mathf.Min(currentDepthChance, maxSpecialChance);
+
+                    bool isSpecial = Random.Range(0f, 100f) <= currentDepthChance;
                     GameObject prefabToSpawn = isSpecial ? selectedTier.specialPrefab : selectedTier.normalPrefab;
 
                     GameObject newBlock = Instantiate(prefabToSpawn, spawnPos, Quaternion.identity);
