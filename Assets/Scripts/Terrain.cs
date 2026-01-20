@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using System.Collections;
 
 [System.Serializable]
 public class BlockTier
@@ -34,7 +35,14 @@ public class Terrain : MonoBehaviour
     public float baseSpecialChance = 5f;
     public float chanceIncreasePerLayer = 2f;
     public float maxSpecialChance = 50f;
+    
+ // Called Coroutine cus of the optimization
+    private void Start()
+    {
+        StartCoroutine(GenerateTerrain());
+    }
 
+// upgrade terrain level
     public void UpgradeTerrainLevel()
     {
         if (currentTerrainLevel < tiers.Length - 1)
@@ -43,14 +51,14 @@ public class Terrain : MonoBehaviour
             ResetChunk(); 
         }
     }
-
+// simple inv counter
     public void AddToInventory(int pointValue)
     {
         inventoryCount += 1;
         totalHiddenValue += pointValue;
         UpdateUI();
     }
-
+// get inv value and clear when needed
     public int GetValueAndClear()
     {
         int valueToSend = totalHiddenValue;
@@ -59,41 +67,53 @@ public class Terrain : MonoBehaviour
         UpdateUI();
         return valueToSend;
     }
-
+// update inv ui
     void UpdateUI()
     {
         if (counterText != null) 
             counterText.text = "Blocks: " + inventoryCount;
     }
 
-    private void Start() => GenerateTerrain();
-
+// the main reset chunk function
     public void ResetChunk()
+{
+    StopAllCoroutines();
+    int childCount = transform.childCount;
+    for (int i = childCount - 1; i >= 0; i--)
     {
-        foreach (Transform child in transform) { Destroy(child.gameObject); }
-        GenerateTerrain();
+        DestroyImmediate(transform.GetChild(i).gameObject);
     }
+    System.GC.Collect();
+    StartCoroutine(GenerateTerrain());
+}
 
-    void GenerateTerrain()
+
+// change to IEnumerator for optimization
+    IEnumerator GenerateTerrain()
+{
+    int halfChunksSize = chunkSize / 2;
+    int blocksSpawnedThisFrame = 0;
+    int spawnLimit = 250;
+
+    for(int x = -halfChunksSize; x < halfChunksSize; x++)
     {
-        int halfChunksSize = chunkSize / 2;
-        for(int x = -halfChunksSize; x < halfChunksSize; x++)
+        for(int z = -halfChunksSize; z < halfChunksSize; z++)
         {
-            for(int z = -halfChunksSize; z < halfChunksSize; z++)
+            for(int y = 0; y > -maxHeight; y--)
             {
-                for(int y = 0; y > -maxHeight; y--)
+                Vector3 spawnPos = new Vector3(x, y, z);
+                
+                int randomTierIndex = Random.Range(0, currentTerrainLevel + 1);
+                BlockTier selectedTier = tiers[randomTierIndex];
+
+                float currentDepthChance = baseSpecialChance + (Mathf.Abs(y) * chanceIncreasePerLayer);
+                currentDepthChance = Mathf.Min(currentDepthChance, maxSpecialChance);
+
+                bool isSpecial = Random.Range(0f, 100f) <= currentDepthChance;
+                GameObject prefabToSpawn = isSpecial ? selectedTier.specialPrefab : selectedTier.normalPrefab;
+
+                if (prefabToSpawn != null)
                 {
-                    Vector3 spawnPos = new Vector3(x, y, z);
-                    
-                    int randomTierIndex = Random.Range(0, currentTerrainLevel + 1);
-                    BlockTier selectedTier = tiers[randomTierIndex];
-
-                    float currentDepthChance = baseSpecialChance + (Mathf.Abs(y) * chanceIncreasePerLayer);
-                    currentDepthChance = Mathf.Min(currentDepthChance, maxSpecialChance);
-
-                    bool isSpecial = Random.Range(0f, 100f) <= currentDepthChance;
-                    GameObject prefabToSpawn = isSpecial ? selectedTier.specialPrefab : selectedTier.normalPrefab;
-
                     GameObject newBlock = Instantiate(prefabToSpawn, spawnPos, Quaternion.identity);
                     newBlock.transform.parent = this.transform;
 
@@ -105,7 +125,14 @@ public class Terrain : MonoBehaviour
                         blockScript.SetupBlock(healthToSet, valueToSet);
                     }
                 }
+                blocksSpawnedThisFrame++;
+                if (blocksSpawnedThisFrame >= spawnLimit)
+                {
+                    blocksSpawnedThisFrame = 0;
+                    yield return null;
+                }
             }
         }
     }
+}
 }
