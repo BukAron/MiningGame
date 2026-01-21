@@ -37,10 +37,20 @@ public class Terrain : MonoBehaviour
     public float maxSpecialChance = 50f;
     
  // Called Coroutine cus of the optimization
-    private void Start()
+    private IEnumerator Start()
     {
-        StartCoroutine(GenerateTerrain());
-    }
+    // Wait until the end of the frame to ensure LoadingManager.Instance is set
+        yield return new WaitForEndOfFrame();
+
+        if (LoadingManager.Instance != null)
+        {
+            StartCoroutine(GenerateTerrain());
+        }
+        else
+        {
+            Debug.LogError("LoadingManager not found! Make sure it's in your first scene.");
+        }
+    } 
 
 // upgrade terrain level
     public void UpgradeTerrainLevel()
@@ -76,63 +86,75 @@ public class Terrain : MonoBehaviour
 
 // the main reset chunk function
     public void ResetChunk()
-{
-    StopAllCoroutines();
-    int childCount = transform.childCount;
-    for (int i = childCount - 1; i >= 0; i--)
     {
-        DestroyImmediate(transform.GetChild(i).gameObject);
+        StopAllCoroutines();
+        int childCount = transform.childCount;
+        for (int i = childCount - 1; i >= 0; i--)
+        {
+            DestroyImmediate(transform.GetChild(i).gameObject);
+        }
+        System.GC.Collect();
+        StartCoroutine(GenerateTerrain());
     }
-    System.GC.Collect();
-    StartCoroutine(GenerateTerrain());
-}
 
 
 // change to IEnumerator for optimization
-    IEnumerator GenerateTerrain()
-{
-    int halfChunksSize = chunkSize / 2;
-    int blocksSpawnedThisFrame = 0;
-    int spawnLimit = 250;
-
-    for(int x = -halfChunksSize; x < halfChunksSize; x++)
+        IEnumerator GenerateTerrain()
+        
     {
-        for(int z = -halfChunksSize; z < halfChunksSize; z++)
+        int halfChunksSize = chunkSize / 2;
+        int blocksSpawnedThisFrame = 0;
+        int spawnLimit = 250;
+
+        float totalBlocks = chunkSize * chunkSize * maxHeight;
+        float currentBlocks = 0;
+
+        yield return StartCoroutine(LoadingManager.Instance.LoadScene());
+        Debug.Log("Scene Loaded! Starting loop...");
+
+        for(int x = -halfChunksSize; x < halfChunksSize; x++)
         {
-            for(int y = 0; y > -maxHeight; y--)
+            for(int z = -halfChunksSize; z < halfChunksSize; z++)
             {
-                Vector3 spawnPos = new Vector3(x, y, z);
-                
-                int randomTierIndex = Random.Range(0, currentTerrainLevel + 1);
-                BlockTier selectedTier = tiers[randomTierIndex];
-
-                float currentDepthChance = baseSpecialChance + (Mathf.Abs(y) * chanceIncreasePerLayer);
-                currentDepthChance = Mathf.Min(currentDepthChance, maxSpecialChance);
-
-                bool isSpecial = Random.Range(0f, 100f) <= currentDepthChance;
-                GameObject prefabToSpawn = isSpecial ? selectedTier.specialPrefab : selectedTier.normalPrefab;
-
-                if (prefabToSpawn != null)
+                for(int y = 0; y > -maxHeight; y--)
                 {
-                    GameObject newBlock = Instantiate(prefabToSpawn, spawnPos, Quaternion.identity);
-                    newBlock.transform.parent = this.transform;
+                    Vector3 spawnPos = new Vector3(x, y, z);
+                    
+                    int randomTierIndex = Random.Range(0, currentTerrainLevel + 1);
+                    BlockTier selectedTier = tiers[randomTierIndex];
 
-                    Block blockScript = newBlock.GetComponent<Block>();
-                    if (blockScript != null)
+                    float currentDepthChance = baseSpecialChance + (Mathf.Abs(y) * chanceIncreasePerLayer);
+                    currentDepthChance = Mathf.Min(currentDepthChance, maxSpecialChance);
+
+                    bool isSpecial = Random.Range(0f, 100f) <= currentDepthChance;
+                    GameObject prefabToSpawn = isSpecial ? selectedTier.specialPrefab : selectedTier.normalPrefab;
+
+                    if (prefabToSpawn != null)
                     {
-                        int healthToSet = isSpecial ? selectedTier.specialHealth : selectedTier.normalHealth;
-                        int valueToSet = isSpecial ? selectedTier.specialValue : selectedTier.normalValue;
-                        blockScript.SetupBlock(healthToSet, valueToSet);
+                        GameObject newBlock = Instantiate(prefabToSpawn, spawnPos, Quaternion.identity);
+                        newBlock.transform.parent = this.transform;
+
+                        Block blockScript = newBlock.GetComponent<Block>();
+                        if (blockScript != null)
+                        {
+                            int healthToSet = isSpecial ? selectedTier.specialHealth : selectedTier.normalHealth;
+                            int valueToSet = isSpecial ? selectedTier.specialValue : selectedTier.normalValue;
+                            blockScript.SetupBlock(healthToSet, valueToSet);
+                        }
                     }
-                }
-                blocksSpawnedThisFrame++;
-                if (blocksSpawnedThisFrame >= spawnLimit)
-                {
-                    blocksSpawnedThisFrame = 0;
-                    yield return null;
+
+                    currentBlocks++;
+                    LoadingManager.Instance.UpdateProgress(currentBlocks / totalBlocks);
+
+                    blocksSpawnedThisFrame++;
+                    if (blocksSpawnedThisFrame >= spawnLimit)
+                    {
+                        blocksSpawnedThisFrame = 0;
+                        yield return null;
+                    }
                 }
             }
         }
+        LoadingManager.Instance.UnloadLoadingScreen();
     }
-}
 }

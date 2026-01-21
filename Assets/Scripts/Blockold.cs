@@ -12,8 +12,10 @@ public class Block : MonoBehaviour
     void Awake()
     {
         rend = GetComponent<Renderer>();
-        rend.material = new Material(rend.material); 
-        baseColor = rend.material.color;
+        // OLD CODE HAD: rend.material = new Material(rend.material); <-- DELETE THIS
+        
+        // Use sharedMaterial to get the color without creating a copy
+        baseColor = rend.sharedMaterial.color;
     }
 
     public void SetupBlock(int tierHealth, int tierValue)
@@ -49,6 +51,8 @@ public class Block : MonoBehaviour
         Color c = baseColor;
         c.a = Mathf.Lerp(0.25f, 1f, t); 
         
+        // This is the "Old" way. It's fast, but only works well if 
+        // GPU Instancing is checked on the material!
         rend.material.color = c; 
     }
 }
