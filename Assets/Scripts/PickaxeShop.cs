@@ -23,7 +23,6 @@ public class PickaxeShop : MonoBehaviour
     {
 
         PlayerStats stats = FindFirstObjectByType<PlayerStats>();
-        
 
         int count = Mathf.Min(uiSlots.Length, upgrades.Length);
         

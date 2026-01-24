@@ -26,8 +26,7 @@ public class BlockShop : MonoBehaviour
 
         for (int i = 0; i < uiSlots.Length; i++)
         {
-            int tierIndex = i + 1; 
-
+            int tierIndex = i + 1;
             if (tierIndex < terrainScript.tiers.Length)
             {
                 uiSlots[i].gameObject.SetActive(true);
@@ -47,8 +46,8 @@ public class BlockShop : MonoBehaviour
     {
         if (isShopOpen)
         {
-            interactPrompt.SetActive(false);
-
+            if(interactPrompt.activeSelf) interactPrompt.SetActive(false);
+            
             if (Input.GetKeyDown(KeyCode.Escape))
             {
                 ToggleShop(false);
@@ -56,11 +55,18 @@ public class BlockShop : MonoBehaviour
             return;
         }
 
-
-        if (PickaxeShop.IsAnyShopOpen) return;
+        if (PickaxeShop.IsAnyShopOpen)
+        {
+            interactPrompt.SetActive(false);
+            return;
+        }
 
         bool lookingAtShop = IsPlayerLookingAtShop();
-        interactPrompt.SetActive(lookingAtShop);
+
+        if (interactPrompt.activeSelf != lookingAtShop)
+        {
+            interactPrompt.SetActive(lookingAtShop);
+        }
 
         if (lookingAtShop && Input.GetKeyDown(KeyCode.E))
         {
@@ -108,7 +114,7 @@ public class BlockShop : MonoBehaviour
             }
             else
             {
-                Debug.Log("Not enough money!");
+                Debug.Log("No money");
             }
         }
     }
