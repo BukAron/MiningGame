@@ -8,4 +8,6 @@ public class PickaxeLevel
     public int damage;
     public float range;
     public float mineInterval;
+    public GameObject pickaxeModel;
+
 }

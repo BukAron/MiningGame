@@ -15,7 +15,6 @@ public class Minereset : MonoBehaviour
                 if (terrain != null)
                 {
                     terrain.ResetChunk();
-                    Debug.Log("Mine Reset triggered by looking at block!");
                 }
             }
         }

@@ -36,19 +36,13 @@ public class Terrain : MonoBehaviour
     public float chanceIncreasePerLayer = 2f;
     public float maxSpecialChance = 50f;
     
- // Called Coroutine cus of the optimization
     private IEnumerator Start()
     {
-    // Wait until the end of the frame to ensure LoadingManager.Instance is set
         yield return new WaitForEndOfFrame();
 
         if (LoadingManager.Instance != null)
         {
             StartCoroutine(GenerateTerrain());
-        }
-        else
-        {
-            Debug.LogError("LoadingManager not found! Make sure it's in your first scene.");
         }
     } 
 
@@ -98,7 +92,7 @@ public class Terrain : MonoBehaviour
     }
 
 
-// change to IEnumerator for optimization
+// changed to IEnumerator for optimization
         IEnumerator GenerateTerrain()
         
     {
@@ -110,7 +104,6 @@ public class Terrain : MonoBehaviour
         float currentBlocks = 0;
 
         yield return StartCoroutine(LoadingManager.Instance.LoadScene());
-        Debug.Log("Scene Loaded! Starting loop...");
 
         for(int x = -halfChunksSize; x < halfChunksSize; x++)
         {

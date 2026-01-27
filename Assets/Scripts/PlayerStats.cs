@@ -23,6 +23,9 @@ public class PlayerStats : MonoBehaviour
             currentPickaxeScript.damage = newLevel.damage;
             currentPickaxeScript.range = newLevel.range;
             currentPickaxeScript.mineInterval = newLevel.mineInterval;
+            currentPickaxeScript.currentPickaxeModel.SetActive(false);
+            newLevel.pickaxeModel.SetActive(true);
+            currentPickaxeScript.currentPickaxeModel = newLevel.pickaxeModel;
             
             Debug.Log("Upgraded to " + newLevel.name);
             return true;

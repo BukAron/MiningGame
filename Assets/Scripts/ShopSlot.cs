@@ -23,12 +23,10 @@ public class ShopSlot : MonoBehaviour
         myData = data;
         playerStats = stats;
         
-        // Fill the UI with data
         if (nameText != null) nameText.text = data.name;
         if (damageText != null) damageText.text = "Damage: " + data.damage;
         if (rangeText != null) rangeText.text = "Range: " + data.range;
         if (cooldownText != null) cooldownText.text = "Cooldown: " + data.mineInterval + "s";
-        
         if (priceText != null) priceText.text = "$" + data.cost;
     }
 

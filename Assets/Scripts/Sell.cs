@@ -7,6 +7,7 @@ public class Shop : MonoBehaviour
     public Camera playerCam;
     public Terrain terrainScript;
     public GameObject interactUI;
+    public AudioSource sellSound;
 
     void Update()
     {
@@ -21,6 +22,7 @@ public class Shop : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.E))
             {
                 SellBlocks();
+                sellSound.Play();
             }
         }
         else
@@ -56,6 +58,7 @@ public class Shop : MonoBehaviour
             if (stats != null)
             {
                 stats.AddMoney(valueToPay);
+
             }
         }
     }

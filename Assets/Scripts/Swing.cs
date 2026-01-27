@@ -6,6 +6,9 @@ public class Pickaxe : MonoBehaviour
     public int damage = 1;
     public float range = 4f;
     public float mineInterval = 0.3f;
+    public GameObject PickaxeModel;
+    public GameObject currentPickaxeModel;
+    public AudioSource mineSound;
 
     [Header("References")]
     public Camera cam;
@@ -47,7 +50,20 @@ public class Pickaxe : MonoBehaviour
             if (block != null)
             {
                 block.Mine(damage);
+                satifyingSound();
+
             }
         }
+    }
+
+    void satifyingSound()
+    {
+        float pitch = Random.Range(0.8f, 1.2f);
+        mineSound.pitch = pitch;
+        float volume = Random.Range(0.8f, 1.0f);
+
+        mineSound.PlayOneShot(mineSound.clip, volume);
+
+
     }
 }

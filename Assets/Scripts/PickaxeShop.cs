@@ -11,13 +11,14 @@ public class PickaxeShop : MonoBehaviour
     [Header("Settings")]
     public float interactionRange = 5f;
     public Transform playerTransform;
+    public AudioSource buySound;
     
     [Header("UI Elements")]
     public GameObject interactPrompt;
     public GameObject shopPanel;
     public Camera playerCam;
 
-    [HideInInspector] public bool isShopOpen = false;
+    public bool isShopOpen = false;
 
     private void Start()
     {
@@ -80,6 +81,7 @@ public class PickaxeShop : MonoBehaviour
             if (stats.TryBuyUpgrade(upgrades[index]))
             {
                 Debug.Log("Purchased: " + upgrades[index].name);
+                buySound.Play();
             }
         }
     }

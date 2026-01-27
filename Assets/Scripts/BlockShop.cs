@@ -12,6 +12,7 @@ public class BlockShop : MonoBehaviour
     [Header("Settings")]
     public float interactionRange = 5f;
     public Transform playerTransform;
+    public AudioSource buySound;
     
     [Header("UI Elements")]
     public GameObject interactPrompt;
@@ -93,11 +94,11 @@ public class BlockShop : MonoBehaviour
         if (tierIndex < terrainScript.tiers.Length && playerStats != null)
         {
             BlockTier tierToBuy = terrainScript.tiers[tierIndex];
-
-
+            
             if (tierIndex <= terrainScript.currentTerrainLevel)
             {
                 Debug.Log("Already unlocked");
+
                 return;
             }
 
@@ -111,6 +112,7 @@ public class BlockShop : MonoBehaviour
                 terrainScript.ResetChunk();
 
                 Debug.Log("Purchased: " + tierToBuy.name);
+                buySound.Play();
             }
             else
             {
